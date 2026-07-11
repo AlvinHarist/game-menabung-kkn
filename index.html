@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -90,12 +90,12 @@
             
             <div class="text-8xl mb-4 robot-idle">🤖</div>
             <h1 class="text-3xl text-blue-600 mb-2 font-heading leading-tight">Robot Penabung Pintar</h1>
-            <p class="text-slate-600 mb-6 font-bold">Belajar Coding & Atur Uang Saku!</p>
+            <p class="text-slate-600 mb-6 font-bold">Belajar Menabung & Mengatur Uang Saku!</p>
             
             <ul class="text-left text-sm text-slate-600 mb-6 space-y-2 bg-blue-50 p-4 rounded-xl border border-blue-200">
-                <li>✅ <b>Peranmu:</b> Programmer</li>
-                <li>✅ <b>Tugas:</b> Beri urutan perintah yang benar agar Robot bisa menabung & tidak boros.</li>
-                <li>⚠️ <b>Hati-hati:</b> Perintah yang salah/terbalik akan membuat Robot error!</li>
+                <li>✅ <b>Peranmu:</b> Pengelola Uang</li>
+                <li>✅ <b>Tugas:</b> Beri urutan langkah yang benar agar Robot bisa menabung & tidak boros.</li>
+                <li>⚠️ <b>Hati-hati:</b> Langkah yang salah/terbalik akan membuat Robot bingung!</li>
             </ul>
             
             <button id="btnStart" class="w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-heading text-xl py-4 rounded-2xl shadow-[0_6px_0_#b45309] active:shadow-none active:translate-y-[6px] transition-all">
@@ -135,7 +135,7 @@
             <div class="flex-1 flex flex-col items-center justify-center relative min-h-[200px]">
                 <div id="robotCharacter" class="text-8xl robot-idle filter drop-shadow-xl transition-all duration-300">🤖</div>
                 <div id="robotChat" class="absolute top-4 bg-white border-2 border-slate-200 p-3 rounded-2xl shadow-lg text-sm font-bold text-center opacity-0 transition-opacity duration-300 max-w-[80%] z-20">
-                    Bip Bop! Menunggu perintah...
+                    Bip Bop! Menunggu langkah...
                     <!-- Segitiga balon kata -->
                     <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-slate-200 rotate-45"></div>
                 </div>
@@ -162,22 +162,22 @@
             <!-- Blok Tersedia -->
             <div class="p-4 bg-white border-b border-slate-200 z-10">
                 <h3 class="font-heading text-slate-500 mb-3 text-sm uppercase flex items-center gap-1">
-                    <span>🧩</span> Pilih Perintah (Klik untuk menambah)
+                    <span>🧩</span> Pilih Langkah (Klik untuk menambah)
                 </h3>
                 <div id="availableBlocks" class="flex flex-wrap gap-2">
                     <!-- Blok akan di-render di sini via JS -->
                 </div>
             </div>
 
-            <!-- Area Program (Drag/Drop/Click target) -->
+            <!-- Area Langkah (Drag/Drop/Click target) -->
             <div class="flex-1 p-4 overflow-y-auto program-area flex flex-col">
                 <h3 class="font-heading text-slate-500 mb-3 text-sm uppercase flex items-center gap-1">
-                    <span>📝</span> Program Kamu (Urutan harus benar!)
+                    <span>📝</span> Langkah Kamu (Urutan harus benar!)
                 </h3>
                 <div id="programArea" class="flex-1 flex flex-col gap-2 p-2 rounded-xl border-2 border-dashed border-slate-300 bg-white bg-opacity-50">
                     <!-- Blok yang dipilih akan muncul di sini -->
                     <div id="emptyProgramMsg" class="h-full flex items-center justify-center text-slate-400 font-bold text-center p-4">
-                        Belum ada instruksi.<br>Klik perintah di atas untuk menyusun algoritma!
+                        Belum ada langkah.<br>Klik pilihan di atas untuk menyusun rencana!
                     </div>
                 </div>
             </div>
@@ -188,7 +188,7 @@
                     <span>🗑️</span> Hapus Semua
                 </button>
                 <button id="btnRun" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-heading text-xl py-3 rounded-xl shadow-[0_5px_0_#166534] active:shadow-none active:translate-y-[5px] transition-all flex items-center justify-center gap-2">
-                    <span>▶️</span> JALANKAN PROGRAM
+                    <span>▶️</span> CEK URUTAN
                 </button>
             </div>
         </section>
@@ -258,8 +258,8 @@
         const levels = [
             {
                 id: 1,
-                title: "Dapat Uang Saku",
-                scenario: "Hari ini ibu memberimu uang saku Rp 10.000. Robot harus mengambil uangnya, menyisihkan setengah untuk ditabung, lalu memasukkan sisanya ke dompet untuk jajan.",
+                title: "Uang Saku Mingguan",
+                scenario: "Kamu mendapat uang saku mingguan Rp 20.000. Pisahkan uang untuk ditabung dan uang untuk jajan di dompet agar kamu tidak boros.",
                 illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
                     <circle cx="50" cy="50" r="45" fill="#bbf7d0" opacity="0.6"/>
                     <g transform="translate(0, -5)">
@@ -270,246 +270,418 @@
                     </g>
                 </svg>`,
                 blocks: [
-                    { id: 'b_jajan', text: 'Beli Mainan Rp10.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🧸' },
-                    { id: 'b_terima', text: 'Terima Uang Rp10.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
-                    { id: 'b_dompet', text: 'Simpan Rp5.000 ke Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '👛' },
-                    { id: 'b_tabung', text: 'Simpan Rp5.000 ke Tabungan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                    { id: 'terima_uang', text: 'Terima Uang Rp20.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'simpan_tabung', text: 'Simpan Rp10.000 ke Tabungan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' },
+                    { id: 'simpan_dompet', text: 'Simpan Rp10.000 ke Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '👛' },
+                    { id: 'jajan_semua', text: 'Jajankan Semua Rp20.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🧸' }
                 ],
-                correctSequence: ['b_terima', 'b_tabung', 'b_dompet'],
-                // Toleransi urutan tabung/dompet bisa ditukar, tapi secara algoritma kita ajarin nabung dulu.
                 validate: (prog) => {
-                    if(prog.join(',') === 'b_terima,b_tabung,b_dompet') return { ok: true, dompet: 5000, tabung: 5000, msg: "Bagus! Kamu mengutamakan menabung sebelum memasukkan uang ke dompet jajan."};
-                    if(prog.join(',') === 'b_terima,b_dompet,b_tabung') return { ok: true, dompet: 5000, tabung: 5000, msg: "Berhasil! Tapi lain kali biasakan nabung dulu ya sebelum simpan di dompet jajan."};
-                    if(prog.includes('b_jajan')) return { ok: false, msg: "Bip bop! Mainan terbeli, tapi uang habis tidak ada tabungan. Sistem sedih. 🥺" };
-                    if(prog[0] !== 'b_terima') return { ok: false, msg: "Bip bop Error! Robot bingung. Uangnya belum diterima tapi sudah mau disimpan? Urutan salah! 🤯" };
-                    return { ok: false, msg: "Bip bop! Instruksi belum lengkap. Robot butuh urutan yang jelas." };
+                    let tempCash = 0; let dom = 0; let tab = 0;
+                    if (prog.length === 0 || prog[0] !== 'terima_uang') return {ok: false, msg: "Kamu harus menerima uang saku terlebih dahulu sebelum mengelolanya!"};
+                    for (let id of prog) {
+                        if (id === 'terima_uang') tempCash += 20000;
+                        else if (id === 'simpan_tabung') { 
+                            if(tempCash < 10000) return {ok: false, msg: "Sisa uang yang diterima tidak cukup untuk ditabung Rp10.000!"}; 
+                            tempCash -= 10000; tab += 10000; 
+                        }
+                        else if (id === 'simpan_dompet') { 
+                            if(tempCash < 10000) return {ok: false, msg: "Sisa uang yang diterima tidak cukup untuk dompet Rp10.000!"}; 
+                            tempCash -= 10000; dom += 10000; 
+                        }
+                        else if (id === 'jajan_semua') {
+                            return {ok: false, msg: "Membelanjakan semua uang saku berarti kamu tidak menabung. Belajarlah menahan diri!"};
+                        }
+                    }
+                    if (tempCash > 0) return {ok: false, msg: "Uangmu belum dialokasikan semua! Jangan biarkan uang tidak jelas tempatnya."};
+                    if (prog.join(',') === 'terima_uang,simpan_tabung,simpan_dompet' || prog.join(',') === 'terima_uang,simpan_dompet,simpan_tabung') {
+                        return {ok: true, dompet: dom, tabung: tab, msg: "Bagus! Kamu berhasil membagi rata uang sakumu untuk ditabung dan uang jajan."};
+                    }
+                    return {ok: false, msg: "Urutan langkah belum benar!"};
                 }
             },
             {
                 id: 2,
-                title: "Buku Tulis Habis",
-                scenario: "Buku tulis matematikamu habis. Harga buku baru Rp 5.000. Di kantin juga ada es krim enak seharga Rp 5.000. Coba suruh Robot menggunakan uang di dompetmu!",
+                title: "Kebutuhan Sekolah",
+                scenario: "Pulpen dan pensilmu habis. Di koperasi harganya Rp 5.000. Di kantin ada jajanan baru (Rp 10.000). Uang di dompetmu cukup. Apa yang kamu beli?",
                 illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
                     <circle cx="50" cy="50" r="45" fill="#e0f2fe" opacity="0.6"/>
-                    <!-- Book -->
                     <rect x="15" y="25" width="45" height="55" rx="4" fill="#38bdf8" stroke="#0284c7" stroke-width="4"/>
                     <rect x="20" y="25" width="5" height="55" fill="#0284c7"/>
                     <line x1="30" y1="40" x2="50" y2="40" stroke="#bae6fd" stroke-width="4" stroke-linecap="round"/>
                     <line x1="30" y1="55" x2="50" y2="55" stroke="#bae6fd" stroke-width="4" stroke-linecap="round"/>
                     <line x1="30" y1="70" x2="40" y2="70" stroke="#bae6fd" stroke-width="4" stroke-linecap="round"/>
-                    <!-- Warning Bubble -->
                     <path d="M55 20 Q 90 20 90 45 Q 90 70 70 70 L 60 80 L 60 70 Q 55 70 55 45 Z" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/>
                     <text x="73" y="53" font-size="28" font-weight="900" font-family="system-ui" fill="#ef4444" text-anchor="middle">!</text>
                 </svg>`,
                 blocks: [
-                    { id: 'c_buka', text: 'Buka Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '👛' },
-                    { id: 'c_ambil', text: 'Ambil Uang Rp5.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
-                    { id: 'c_es', text: 'Beli Es Krim (Keinginan)', color: 'bg-pink-100 border-pink-300 text-pink-800', emoji: '🍦' },
-                    { id: 'c_buku', text: 'Beli Buku Tulis (Kebutuhan)', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '📓' },
-                    { id: 'c_tutup', text: 'Tutup Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🔒' }
+                    { id: 'beli_alat_tulis', text: 'Beli Alat Tulis Rp5.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '✏️' },
+                    { id: 'beli_jajanan', text: 'Beli Jajanan Baru Rp10.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🍦' },
+                    { id: 'simpan_sisa', text: 'Simpan Sisa Rp5.000 ke Tabungan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
                 ],
-                correctSequence: ['c_buka', 'c_ambil', 'c_buku', 'c_tutup'],
                 validate: (prog) => {
-                    const str = prog.join(',');
-                    if (str === 'c_buka,c_ambil,c_buku,c_tutup') return { ok: true, dompet: -5000, tabung: 0, msg: "Hebat! Kamu mengutamakan KEBUTUHAN (buku) daripada KEINGINAN (es krim) dengan urutan yang logis." };
-                    if (prog.includes('c_es')) return { ok: false, msg: "Bip bop! Es krim enak, tapi besok kamu dihukum guru karena tidak punya buku tulis. Keputusan kurang tepat! 😭" };
-                    if (prog.includes('c_buku') && !prog.includes('c_buka')) return { ok: false, msg: "Brak! Robot menabrak kasir. Dompet belum dibuka tapi mau bayar buku? Urutan salah (Error 404). 🤖💢" };
-                    return { ok: false, msg: "Bip bop! Instruksi tidak jelas. Robot butuh algoritma buka dompet, ambil uang, beli, lalu tutup dompet." };
+                    let d = 0; let t = 0;
+                    for (let id of prog) {
+                        if (id === 'beli_alat_tulis') {
+                            if(state.dompet + d < 5000) return {ok: false, msg: "Uang dompet tidak cukup!"};
+                            d -= 5000;
+                        } else if (id === 'beli_jajanan') {
+                            if(state.dompet + d < 10000) return {ok: false, msg: "Uang dompet tidak cukup!"};
+                            return {ok: false, msg: "Jajanan memang enak, tapi alat tulis adalah KEBUTUHAN utama sekolahmu. Prioritaskan kebutuhan sekolahmu!"};
+                        } else if (id === 'simpan_sisa') {
+                            if(state.dompet + d < 5000) return {ok: false, msg: "Uang sisa di dompet tidak cukup Rp5.000!"};
+                            d -= 5000;
+                            t += 5000;
+                        }
+                    }
+                    if (prog.join(',') === 'beli_alat_tulis,simpan_sisa') {
+                        return {ok: true, dompet: d, tabung: t, msg: "Hebat! Kebutuhan sekolah terpenuhi, dan kamu bahkan menambah isi tabunganmu dari uang sisa."};
+                    }
+                    return {ok: false, msg: "Langkahmu kurang tepat atau belum selesai. Beli kebutuhan utama lalu simpan sisanya!"};
                 }
             },
             {
                 id: 3,
-                title: "Bekal vs Jajan",
-                scenario: "Selesai jam olahraga, kamu sangat haus. Kamu ingat ibumu membawakan botol minum dari rumah. Apa instruksi yang tepat agar tabunganmu aman?",
-                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
-                    <circle cx="50" cy="50" r="45" fill="#ffedd5" opacity="0.6"/>
-                    <!-- Backpack -->
-                    <rect x="15" y="35" width="45" height="50" rx="10" fill="#fb923c" stroke="#ea580c" stroke-width="4"/>
-                    <path d="M25 35 C 25 15 50 15 50 35" fill="none" stroke="#ea580c" stroke-width="5" stroke-linecap="round"/>
-                    <rect x="27.5" y="55" width="20" height="20" rx="4" fill="#fdba74" stroke="#ea580c" stroke-width="3"/>
-                    <!-- Water Bottle -->
-                    <rect x="65" y="35" width="22" height="50" rx="8" fill="#cffafe" stroke="#06b6d4" stroke-width="3"/>
-                    <path d="M65 55 Q 76 65 87 55 L 87 77 Q 76 85 65 77 Z" fill="#06b6d4" opacity="0.4"/>
-                    <rect x="71" y="25" width="10" height="10" rx="2" fill="#22d3ee" stroke="#06b6d4" stroke-width="3"/>
-                </svg>`,
-                blocks: [
-                    { id: 'd_tas', text: 'Buka Tas Sekolah', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '🎒' },
-                    { id: 'd_ambil', text: 'Ambil Botol Minum', color: 'bg-teal-100 border-teal-300 text-teal-800', emoji: '🫙' },
-                    { id: 'd_boba', text: 'Beli Es Boba Mahal', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🧋' },
-                    { id: 'd_minum', text: 'Minum Air Sampai Habis', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '💧' },
-                    { id: 'd_dompet', text: 'Ambil Uang Dompet', color: 'bg-green-100 border-green-300 text-green-800', emoji: '👛' }
-                ],
-                correctSequence: ['d_tas', 'd_ambil', 'd_minum'],
-                validate: (prog) => {
-                    const str = prog.join(',');
-                    if (str === 'd_tas,d_ambil,d_minum') return { ok: true, dompet: 0, tabung: 0, msg: "Brilian! Membawa bekal adalah cara terbaik menghemat uang. Tabungan dan dompetmu aman!" };
-                    if (prog.includes('d_boba')) return { ok: false, msg: "Bip bop! Es boba mahal dibeli. Uang dompet terkuras habis. Padahal bawa air minum dari rumah. Boros terdeteksi! 🚨" };
-                    if (prog.includes('d_minum') && !prog.includes('d_tas')) return { ok: false, msg: "Bip bop! Robot mencoba minum botol tanpa membuka tas. Tas basah! Urutan instruksi salah! 🤖💦" };
-                    return { ok: false, msg: "Bip bop! Robot kehausan karena instruksi belum selesai." };
-                }
-            },
-            {
-                id: 4,
-                title: "Hadiah Kejutan Nenek",
-                scenario: "Nenek berkunjung dan memberimu amplop berisi Rp 20.000! Karena hari ini tidak ke sekolah, uang ini uang kaget. Apa yang harus Robot lakukan?",
-                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
-                    <circle cx="50" cy="50" r="45" fill="#fce7f3" opacity="0.6"/>
-                    <!-- Money behind Envelope -->
-                    <rect x="25" y="15" width="50" height="30" rx="2" fill="#86efac" stroke="#16a34a" stroke-width="4"/>
-                    <circle cx="50" cy="30" r="10" fill="#16a34a" opacity="0.4"/>
-                    <text x="50" y="34" font-size="12" font-weight="bold" font-family="system-ui" fill="white" text-anchor="middle">Rp</text>
-                    <!-- Envelope -->
-                    <rect x="15" y="35" width="70" height="45" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="4"/>
-                    <path d="M15 35 L50 60 L85 35" fill="none" stroke="#ca8a04" stroke-width="4" stroke-linejoin="round"/>
-                    <path d="M15 80 L40 60 M85 80 L60 60" fill="none" stroke="#ca8a04" stroke-width="3" stroke-linecap="round"/>
-                    <!-- Sparkles -->
-                    <path d="M80 15 L83 10 L88 15 L93 18 L88 21 L83 26 L80 21 L75 18 Z" fill="#fbbf24"/>
-                    <path d="M20 15 L22 10 L26 15 L30 17 L26 19 L22 24 L20 19 L16 17 Z" fill="#fbbf24"/>
-                </svg>`,
-                blocks: [
-                    { id: 'e_terima', text: 'Terima Amplop', color: 'bg-green-100 border-green-300 text-green-800', emoji: '✉️' },
-                    { id: 'e_game', text: 'Beli Diamond Game', color: 'bg-red-100 border-red-300 text-red-800', emoji: '💎' },
-                    { id: 'e_kamar', text: 'Jalan ke Kamar', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '🚶' },
-                    { id: 'e_celengan', text: 'Masukkan Semua ke Celengan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
-                ],
-                correctSequence: ['e_terima', 'e_celengan'],
-                validate: (prog) => {
-                    const str = prog.join(',');
-                    if (str === 'e_terima,e_celengan') return { ok: true, dompet: 0, tabung: 20000, msg: "Luar Biasa! Uang hadiah langsung ditabung. Target celenganmu akan cepat penuh!" };
-                    if (prog.includes('e_game')) return { ok: false, msg: "Bip bop. Diamond game dibeli, kesenangan cuma sebentar, uang nenek lenyap seketika. Keputusan emosional terdeteksi! 📉" };
-                    
-                    return { ok: false, msg: "Bip bop. Instruksi kurang lengkap. Selesaikan tugasnya Programmer!" };
-                }
-            },
-            // LEVEL BARU (5-8)
-            {
-                id: 5,
-                title: "Godaan Diskon Palsu",
-                scenario: "Saat jalan pulang, ada toko mainan memasang tulisan 'DISKON 50%'. Tapi ingat, di rumah kamu sudah punya banyak mainan yang mirip. Apa yang harus dilakukan?",
+                title: "Godaan Diskon (Keinginan)",
+                scenario: "Diskon mainan jadi Rp 15.000. Tabunganmu ada banyak! Mainan di rumah masih menumpuk. Apa yang sebaiknya dilakukan?",
                 illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
                     <circle cx="50" cy="50" r="45" fill="#fecaca" opacity="0.6"/>
-                    <!-- Store Sign -->
                     <rect x="20" y="20" width="60" height="30" rx="5" fill="#ef4444" stroke="#b91c1c" stroke-width="4"/>
                     <text x="50" y="42" font-size="20" font-weight="900" font-family="system-ui" fill="white" text-anchor="middle">50%</text>
-                    <!-- Toy Car -->
                     <path d="M30 65 L40 55 L60 55 L70 65 L75 65 L75 75 L25 75 L25 65 Z" fill="#3b82f6" stroke="#1d4ed8" stroke-width="3"/>
                     <circle cx="35" cy="75" r="7" fill="#1e293b"/>
                     <circle cx="65" cy="75" r="7" fill="#1e293b"/>
                 </svg>`,
                 blocks: [
-                    { id: 'f_lihat', text: 'Lihat Papan Diskon', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '👀' },
-                    { id: 'f_beli', text: 'Beli Mainan Diskon', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🏎️' },
-                    { id: 'f_ingat', text: 'Ingat Mainan di Rumah', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🧠' },
-                    { id: 'f_pergi', text: 'Tinggalkan Toko', color: 'bg-green-100 border-green-300 text-green-800', emoji: '🚶‍♂️' }
+                    { id: 'ambil_tabungan', text: 'Ambil Tabungan Rp15.000', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🏧' },
+                    { id: 'beli_mainan', text: 'Beli Mainan Diskon Rp15.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🏎️' },
+                    { id: 'abaikan_mainan', text: 'Abaikan Mainan (Tidak Beli)', color: 'bg-green-100 border-green-300 text-green-800', emoji: '🛑' },
+                    { id: 'rapikan_mainan', text: 'Rapikan Mainan Lama', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '🧸' }
                 ],
-                correctSequence: ['f_lihat', 'f_ingat', 'f_pergi'],
                 validate: (prog) => {
-                    const str = prog.join(',');
-                    if (str === 'f_lihat,f_ingat,f_pergi') return { ok: true, dompet: 0, tabung: 0, msg: "Cerdas! Diskon tidak berguna jika kita membeli barang yang sebenarnya tidak kita butuhkan. Uangmu aman!" };
-                    if (prog.includes('f_beli')) return { ok: false, msg: "Bip bop! Mainan dibeli. Sampai rumah dimarahi ibu karena mainan menumpuk. Uang terbuang sia-sia! 💸" };
-                    if (str === 'f_lihat,f_pergi') return { ok: false, msg: "Hampir benar! Tapi sebelum pergi, robot harus 'Ingat Mainan di Rumah' agar keputusannya punya alasan logis. Coba lagi!" };
-                    return { ok: false, msg: "Bip bop. Urutan instruksi tidak lengkap." };
+                    let d = 0; let t = 0;
+                    for (let id of prog) {
+                        if (id === 'ambil_tabungan') {
+                            if (state.tabungan + t < 15000) return {ok: false, msg: "Tabunganmu tidak cukup!"};
+                            t -= 15000; d += 15000;
+                        } else if (id === 'beli_mainan') {
+                            if (state.dompet + d < 15000) return {ok: false, msg: "Uang tidak cukup! Harus ambil tabungan dulu."};
+                            return {ok: false, msg: "Jangan tergoda diskon! Membeli barang yang tidak kamu butuhkan hanyalah pemborosan."};
+                        } else if (id === 'abaikan_mainan') {
+                        } else if (id === 'rapikan_mainan') {
+                        }
+                    }
+                    if (prog.join(',') === 'abaikan_mainan,rapikan_mainan') {
+                        return {ok: true, dompet: d, tabung: t, msg: "Keputusan jenius! Kamu menahan keinginan impulsif dan menyadari kamu masih punya banyak mainan untuk dimainkan."};
+                    }
+                    return {ok: false, msg: "Abaikan saja godaannya dan rawatlah barang-barang lamamu!"};
                 }
             },
             {
-                id: 6,
-                title: "Dana Darurat (Sakit)",
-                scenario: "Aduh! Kamu sakit perut karena makan pedas. Kamu harus beli obat di UKS seharga Rp5.000, padahal tadinya uang itu mau dipakai beli stiker keren.",
+                id: 4,
+                title: "Dana Darurat (Kebutuhan)",
+                scenario: "Lupa bawa bekal dan kamu sangat lapar. Makan siang di sekolah Rp 10.000. Dompetmu kosong, tapi ada tabungan. Apa keputusanmu?",
                 illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
                     <circle cx="50" cy="50" r="45" fill="#dcfce7" opacity="0.6"/>
-                    <!-- Medicine Bottle -->
                     <rect x="35" y="40" width="30" height="40" rx="5" fill="white" stroke="#16a34a" stroke-width="4"/>
                     <rect x="40" y="30" width="20" height="10" fill="#16a34a"/>
-                    <!-- Cross -->
                     <path d="M45 55 L55 55 M50 50 L50 60" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/>
-                    <!-- Dizzy face / bubbles -->
                     <circle cx="75" cy="30" r="8" fill="#86efac" opacity="0.7"/>
                     <circle cx="85" cy="20" r="4" fill="#86efac" opacity="0.7"/>
                 </svg>`,
                 blocks: [
-                    { id: 'g_sakit', text: 'Pegang Perut Sakit', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🤕' },
-                    { id: 'g_buka', text: 'Buka Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '👛' },
-                    { id: 'g_stiker', text: 'Beli Stiker Keren', color: 'bg-pink-100 border-pink-300 text-pink-800', emoji: '⭐' },
-                    { id: 'g_obat', text: 'Beli Obat Rp5.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💊' },
-                    { id: 'g_minum', text: 'Minum Obat', color: 'bg-teal-100 border-teal-300 text-teal-800', emoji: '💧' }
+                    { id: 'ambil_tabung', text: 'Ambil Tabungan Rp10.000', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🏧' },
+                    { id: 'beli_makan', text: 'Beli Makan Siang Rp10.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '🍱' },
+                    { id: 'tahan_lapar', text: 'Tahan Lapar Sampai Sakit', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🤕' },
+                    { id: 'pinjam_teman', text: 'Pinjam Uang Teman Rp10.000', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '🤝' }
                 ],
-                correctSequence: ['g_buka', 'g_obat', 'g_minum'],
                 validate: (prog) => {
-                    const str = prog.join(',');
-                    if (str === 'g_sakit,g_buka,g_obat,g_minum') return { ok: true, dompet: -5000, tabung: 0, msg: "Keputusan tepat! Kesehatan (kebutuhan) harus diutamakan di atas stiker (keinginan). Uang saku bisa jadi 'dana darurat'." };
-                    if (prog.includes('g_stiker')) return { ok: false, msg: "Bip bop! Stiker dibeli, tapi robot masih sakit perut dan pingsan. Game Over! 😵" };
-                    if (prog.includes('g_obat') && !prog.includes('g_buka')) return { ok: false, msg: "Bip bop! Robot mau bayar obat tapi dompet belum dibuka. Kasir marah! 💢" };
-                    if (str.endsWith('g_obat')) return { ok: false, msg: "Bip bop! Obat sudah dibeli tapi belum diminum. Perut masih sakit!" };
-                    return { ok: false, msg: "Instruksi belum selesai. Selesaikan masalah sakit perutnya!" };
+                    let d = 0; let t = 0;
+                    for (let id of prog) {
+                        if (id === 'ambil_tabung') {
+                            if (state.tabungan + t < 10000) return {ok: false, msg: "Tabunganmu tidak cukup!"};
+                            t -= 10000; d += 10000;
+                        } else if (id === 'beli_makan') {
+                            if (state.dompet + d < 10000) return {ok: false, msg: "Uang dompet tidak cukup, ambil tabungan dulu!"};
+                            d -= 10000;
+                        } else if (id === 'tahan_lapar') {
+                            return {ok: false, msg: "Kesehatan itu kebutuhan utama! Jangan menyiksa diri jika kamu punya tabungan untuk kondisi darurat."};
+                        } else if (id === 'pinjam_teman') {
+                            return {ok: false, msg: "Jangan berhutang pada orang lain jika kamu sendiri masih memiliki uang tabungan!"};
+                        }
+                    }
+                    if (prog.join(',') === 'ambil_tabung,beli_makan') {
+                        return {ok: true, dompet: d, tabung: t, msg: "Tepat sekali! Fungsi tabungan salah satunya adalah menjadi dana darurat untuk kebutuhan mendesak."};
+                    }
+                    return {ok: false, msg: "Langkah kurang tepat. Ambil tabungan lalu belikan makan!"};
                 }
             },
             {
-                id: 7,
-                title: "Wirausaha Cilik",
-                scenario: "Temanmu sangat suka komik lamamu dan ingin membelinya seharga Rp15.000. Ini kesempatan dapat uang tambahan! Bagaimana urutan transaksi yang benar?",
+                id: 5,
+                title: "Tambahan Uang",
+                scenario: "Membantu ibu membersihkan halaman, kamu dapat hadiah Rp 15.000.",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#fce7f3" opacity="0.6"/>
+                    <rect x="25" y="15" width="50" height="30" rx="2" fill="#86efac" stroke="#16a34a" stroke-width="4"/>
+                    <circle cx="50" cy="30" r="10" fill="#16a34a" opacity="0.4"/>
+                    <text x="50" y="34" font-size="12" font-weight="bold" font-family="system-ui" fill="white" text-anchor="middle">Rp</text>
+                    <rect x="15" y="35" width="70" height="45" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="4"/>
+                    <path d="M15 35 L50 60 L85 35" fill="none" stroke="#ca8a04" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M15 80 L40 60 M85 80 L60 60" fill="none" stroke="#ca8a04" stroke-width="3" stroke-linecap="round"/>
+                </svg>`,
+                blocks: [
+                    { id: 'terima_hadiah', text: 'Terima Hadiah Rp15.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'beli_buku', text: 'Beli Buku Cerita Edukasi Rp5.000', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '📖' },
+                    { id: 'beli_game', text: 'Beli Diamond Game Rp15.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '💎' },
+                    { id: 'simpan_sisa', text: 'Simpan Sisa ke Tabungan Rp10.000', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                ],
+                validate: (prog) => {
+                    let cash = 0; let t = 0; let d = 0;
+                    if(prog.length === 0 || prog[0] !== 'terima_hadiah') return {ok: false, msg: "Terima uangnya dulu sebelum digunakan!"};
+                    for (let id of prog) {
+                        if (id === 'terima_hadiah') cash += 15000;
+                        else if (id === 'beli_buku') {
+                            if (cash < 5000) return {ok: false, msg: "Uang hadiah belum dialokasikan, error."};
+                            cash -= 5000;
+                        } else if (id === 'beli_game') {
+                            return {ok: false, msg: "Diamond game hanya hiburan sesaat. Gunakan hadiahmu untuk hal bermanfaat dan tabungan."};
+                        } else if (id === 'simpan_sisa') {
+                            if (cash < 10000) return {ok: false, msg: "Sisa hadiah tidak cukup Rp10.000!"};
+                            cash -= 10000; t += 10000;
+                        }
+                    }
+                    if (cash !== 0) return {ok: false, msg: "Gunakan uang hadiahmu dengan bijak sampai dialokasikan dengan benar."};
+                    if (prog.join(',') === 'terima_hadiah,beli_buku,simpan_sisa') {
+                        return {ok: true, dompet: d, tabung: t, msg: "Luar biasa! Kamu mendapatkan ilmu dari buku dan juga memperbanyak tabunganmu."};
+                    }
+                    return {ok: false, msg: "Urutan langkah masih salah."};
+                }
+            },
+            {
+                id: 6,
+                title: "Bisnis Kecil",
+                scenario: "Kamu menjual buku cerita bekas yang sudah selesai dibaca kepada temanmu seharga Rp 20.000.",
                 illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
                     <circle cx="50" cy="50" r="45" fill="#fef08a" opacity="0.6"/>
-                    <!-- Comic Book -->
                     <rect x="25" y="30" width="30" height="45" rx="3" fill="#ef4444" stroke="#991b1b" stroke-width="3" transform="rotate(-15 40 50)"/>
                     <rect x="30" y="35" width="20" height="20" fill="#fca5a5" transform="rotate(-15 40 50)"/>
-                    <!-- Exchange Arrows -->
                     <path d="M60 40 Q75 35 75 50 Q75 65 60 60" fill="none" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
                     <polygon points="58,35 50,40 58,45" fill="#eab308"/>
                     <polygon points="62,55 70,60 62,65" fill="#eab308"/>
-                    <!-- Money Coin -->
                     <circle cx="75" cy="50" r="10" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
                     <text x="75" y="54" font-size="10" font-weight="bold" font-family="system-ui" fill="#d97706" text-anchor="middle">Rp</text>
                 </svg>`,
                 blocks: [
-                    { id: 'h_ambil', text: 'Ambil Komik Lama', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '📕' },
-                    { id: 'h_kasih', text: 'Berikan ke Teman', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🤝' },
-                    { id: 'h_jajan', text: 'Langsung Jajan', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🌭' },
-                    { id: 'h_terima', text: 'Terima Uang Rp15.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
-                    { id: 'h_tabung', text: 'Masukkan ke Celengan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                    { id: 'jual_komik', text: 'Jual Buku Bekas', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '📕' },
+                    { id: 'terima_uang', text: 'Terima Uang Rp20.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'beli_mainan_mahal', text: 'Beli Mainan Mahal Rp20.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🏎️' },
+                    { id: 'simpan_hasil', text: 'Simpan Hasil ke Tabungan Rp20.000', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
                 ],
-                correctSequence: ['h_ambil', 'h_kasih', 'h_terima', 'h_tabung'],
                 validate: (prog) => {
-                    const str = prog.join(',');
-                    if (str === 'h_ambil,h_kasih,h_terima,h_tabung') return { ok: true, dompet: 0, tabung: 15000, msg: "Luar biasa! Kamu berhasil berbisnis kecil-kecilan dan menabung seluruh keuntungannya. Tabunganmu meroket! 🚀" };
-                    if (prog.includes('h_terima') && !prog.includes('h_kasih')) return { ok: false, msg: "Bip bop! Robot menerima uang tapi komiknya tidak diberikan. Itu namanya menipu! Error sistem moral! 👮" };
-                    if (prog.includes('h_jajan')) return { ok: false, msg: "Bip bop! Uang hasil jualan langsung habis buat jajan. Padahal bisa ditabung untuk beli barang yang lebih besar. Sayang sekali." };
-                    return { ok: false, msg: "Urutan transaksi salah. Harus ambil barang -> berikan -> terima uang -> simpan." };
+                    let hasJual = false; let cash = 0; let t = 0;
+                    for(let id of prog) {
+                        if (id === 'jual_komik') hasJual = true;
+                        else if (id === 'terima_uang') {
+                            if(!hasJual) return {ok: false, msg: "Kamu harus memberikan komik tersebut dulu sebelum menerima uang (Jual Komik)."};
+                            cash += 20000;
+                        }
+                        else if (id === 'beli_mainan_mahal') {
+                            return {ok: false, msg: "Uang hasil jualan jangan langsung dihabiskan impulsif. Tabung untuk impian yang lebih besar!"};
+                        }
+                        else if (id === 'simpan_hasil') {
+                            if(cash < 20000) return {ok: false, msg: "Uang tunai tidak cukup, terima uang dulu!"};
+                            cash -= 20000; t += 20000;
+                        }
+                    }
+                    if (prog.join(',') === 'jual_komik,terima_uang,simpan_hasil') {
+                        return {ok: true, dompet: 0, tabung: t, msg: "Keren! Kamu seorang wirausahawan pintar yang tahu pentingnya menabung hasil usahamu."};
+                    }
+                    return {ok: false, msg: "Urutan langkah belum benar!"};
                 }
             },
             {
-                id: 8,
-                title: "Membeli Sepatu Impian (Boss Level)",
-                scenario: "Target tabunganmu tercapai! Sepatu sekolahmu rusak dan harga sepatu baru Rp50.000. Susun 5 instruksi berurutan dengan sangat hati-hati untuk membelinya!",
+                id: 7,
+                title: "Kebutuhan & Berbagi",
+                scenario: "Sepatu sekolah jebol (butuh Rp 25.000). Ada donasi bencana alam di sekolah (Rp 5.000).",
                 illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
                     <circle cx="50" cy="50" r="45" fill="#f3e8ff" opacity="0.6"/>
-                    <!-- Broken Shoe -->
                     <path d="M20 60 Q 30 55 40 60 L 40 70 L 20 70 Z" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
                     <path d="M35 60 L35 50" stroke="#64748b" stroke-width="2" stroke-dasharray="2,2"/>
-                    <!-- New Shoe -->
                     <path d="M50 50 Q 65 40 80 55 L 80 70 L 45 70 Q 45 60 50 50 Z" fill="#a855f7" stroke="#7e22ce" stroke-width="3"/>
                     <circle cx="75" cy="45" r="4" fill="#fcd34d"/>
                     <path d="M50 70 L80 70" stroke="white" stroke-width="3"/>
                 </svg>`,
                 blocks: [
-                    { id: 'i_buka', text: 'Buka Celengan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🔓' },
-                    { id: 'i_ambil', text: 'Ambil Uang Rp50.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
-                    { id: 'i_game', text: 'Mampir Main PS', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🎮' },
-                    { id: 'i_kunci', text: 'Kunci Kembali Celengan', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '🔒' },
-                    { id: 'i_toko', text: 'Pergi ke Toko Sepatu', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🏪' },
-                    { id: 'i_beli', text: 'Bayar Sepatu', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '👟' }
+                    { id: 'ambil_tabung', text: 'Ambil Tabungan Rp30.000', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🏧' },
+                    { id: 'beli_sepatu', text: 'Beli Sepatu Baru Rp25.000', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '👟' },
+                    { id: 'beli_jaket', text: 'Beli Jaket Keren Rp35.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🧥' },
+                    { id: 'sumbangkan', text: 'Sumbangkan Rp5.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '❤️' }
                 ],
-                correctSequence: ['i_buka', 'i_ambil', 'i_kunci', 'i_toko', 'i_beli'],
                 validate: (prog) => {
-                    const str = prog.join(',');
-                    if (str === 'i_buka,i_ambil,i_kunci,i_toko,i_beli') return { ok: true, dompet: 0, tabung: -50000, msg: "SEMPURNA! 🌟 Kamu mengatur urutan dengan sangat rapi, tidak tergoda main PS, dan ingat mengunci celengan lagi. Kamu benar-benar Programmer Keuangan yang Hebat!" };
-                    if (prog.includes('i_game')) return { ok: false, msg: "Bip bop! Mampir main PS, uang sepatu terpakai. Besok ke sekolah nyeker (tanpa sepatu). Keputusan yang buruk! 🦶" };
-                    if (prog.includes('i_toko') && !prog.includes('i_kunci')) return { ok: false, msg: "Bip bop! Celengan ditinggal terbuka. Uang sisanya hilang tertiup angin atau dicuri. Ingat tutup celengan sebelum pergi! 😱" };
-                    if (prog.includes('i_beli') && !prog.includes('i_toko')) return { ok: false, msg: "Bip bop! Bayar sepatu tapi belum pergi ke toko? Robot melempar uang ke udara. Error logika! 🤖💨" };
-                    return { ok: false, msg: "Instruksi salah. Harus: Buka -> Ambil -> Kunci -> Pergi Toko -> Bayar. Coba susun ulang!" };
+                    let d = 0; let t = 0;
+                    for (let id of prog) {
+                        if (id === 'ambil_tabung') {
+                            if (state.tabungan + t < 30000) return {ok: false, msg: "Tabunganmu tidak cukup!"};
+                            t -= 30000; d += 30000;
+                        } else if (id === 'beli_jaket') {
+                            return {ok: false, msg: "Kamu butuh sepatu, bukan jaket keren. Uangmu juga tidak cukup jika ditotal dengan sepatu."};
+                        } else if (id === 'beli_sepatu') {
+                            if (d < 25000) return {ok: false, msg: "Uang tidak cukup, ambil tabungan dulu!"};
+                            d -= 25000;
+                        } else if (id === 'sumbangkan') {
+                            if (d < 5000) return {ok: false, msg: "Uang tidak cukup, ambil tabungan dulu!"};
+                            d -= 5000;
+                        }
+                    }
+                    if (prog.join(',') === 'ambil_tabung,beli_sepatu,sumbangkan' || prog.join(',') === 'ambil_tabung,sumbangkan,beli_sepatu') {
+                        return {ok: true, dompet: d, tabung: t, msg: "Mulia sekali! Kamu mengurus kebutuhanmu (sepatu) dan tetap menyisihkan untuk membantu sesama."};
+                    }
+                    return {ok: false, msg: "Langkahmu belum lengkap atau urutannya salah."};
+                }
+            },
+            {
+                id: 8,
+                title: "Tujuan Besar (Sepeda)",
+                scenario: "Ingin beli sepeda bekas (Rp 50.000) agar hemat ongkos angkot. Kamu dapat angpao tahun baru Rp 60.000.",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#fce7f3" opacity="0.6"/>
+                    <rect x="15" y="35" width="70" height="45" rx="4" fill="#ef4444" stroke="#b91c1c" stroke-width="4"/>
+                    <path d="M15 35 L50 60 L85 35" fill="none" stroke="#b91c1c" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M15 80 L40 60 M85 80 L60 60" fill="none" stroke="#b91c1c" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="8" fill="#fbbf24"/>
+                </svg>`,
+                blocks: [
+                    { id: 'terima_angpao', text: 'Terima Angpao Rp60.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '🧧' },
+                    { id: 'beli_sepeda', text: 'Beli Sepeda Bekas Rp50.000', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🚲' },
+                    { id: 'beli_sepatu_roda', text: 'Beli Sepatu Roda Mahal Rp60.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🛼' },
+                    { id: 'simpan_sisa', text: 'Simpan Sisa ke Tabungan Rp10.000', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                ],
+                validate: (prog) => {
+                    let cash = 0; let t = 0;
+                    for (let id of prog) {
+                        if (id === 'terima_angpao') {
+                            cash += 60000;
+                        } else if (id === 'beli_sepatu_roda') {
+                            return {ok: false, msg: "Sepatu roda mahal hanya untuk bermain. Sepeda akan membantumu hemat ongkos angkot (investasi)!"};
+                        } else if (id === 'beli_sepeda') {
+                            if(cash < 50000) return {ok: false, msg: "Terima angpao dulu!"};
+                            cash -= 50000;
+                        } else if (id === 'simpan_sisa') {
+                            if (cash < 10000) return {ok: false, msg: "Uang tidak cukup!"};
+                            cash -= 10000; t += 10000;
+                        }
+                    }
+                    if (prog.join(',') === 'terima_angpao,beli_sepeda,simpan_sisa') {
+                        return {ok: true, dompet: 0, tabung: t, msg: "Sempurna! Kamu sukses mencapai mimpimu membeli barang produktif berkat kesabaran."};
+                    }
+                    return {ok: false, msg: "Urutan langkah belum benar!"};
+                }
+            },
+            {
+                id: 9,
+                title: "Manajemen Anggaran (HOTS)",
+                scenario: "Kamu diberi uang spesial Rp 30.000 dari Ayah ke Pasar Malam. Syarat mutlak: MENGUTAMAKAN PENDIDIKAN, HIBURAN WAJAR, DAN WAJIB MENABUNG!",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#fef08a" opacity="0.6"/>
+                    <path d="M20 70 L80 70 L80 80 L20 80 Z" fill="#b45309"/>
+                    <path d="M30 40 L70 40 L50 20 Z" fill="#fb923c"/>
+                    <rect x="40" y="40" width="20" height="30" fill="#fcd34d"/>
+                </svg>`,
+                blocks: [
+                    { id: 'terima_ayah', text: 'Terima Uang Ayah Rp30.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'beli_wahana', text: 'Beli Tiket Wahana Rp10.000', color: 'bg-pink-100 border-pink-300 text-pink-800', emoji: '🎢' },
+                    { id: 'beli_jajanan', text: 'Beli Jajanan Favorit Rp10.000', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '🍡' },
+                    { id: 'beli_buku', text: 'Beli Buku Pengetahuan Murah Rp15.000', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '📚' },
+                    { id: 'beli_mainan', text: 'Beli Mainan Koleksi Rp20.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🤖' },
+                    { id: 'simpan_sisa', text: 'Simpan Sisa Uang ke Tabungan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                ],
+                validate: (prog) => {
+                    if (prog.length === 0 || prog[0] !== 'terima_ayah') return {ok: false, msg: "Mulai dengan menerima uang dari Ayah!"};
+                    if (prog[prog.length-1] !== 'simpan_sisa') return {ok: false, msg: "Langkah terakhir harus menyimpan sisa uang ke tabungan!"};
+                    if (prog.length === 2) return {ok: false, msg: "Kamu ke pasar malam masa tidak membeli apa-apa? Coba belilah sesuatu secara bijak."};
+                    
+                    let cash = 30000; let t = 0;
+                    let boughtBuku = false, boughtMainan = false, boughtWahana = false, boughtJajanan = false;
+                    for (let i = 1; i < prog.length - 1; i++) {
+                        let id = prog[i];
+                        if (id === 'beli_wahana') { cash -= 10000; boughtWahana = true; }
+                        else if (id === 'beli_jajanan') { cash -= 10000; boughtJajanan = true; }
+                        else if (id === 'beli_buku') { cash -= 15000; boughtBuku = true; }
+                        else if (id === 'beli_mainan') { cash -= 20000; boughtMainan = true; }
+                        else if (id === 'terima_ayah' || id === 'simpan_sisa') { return {ok: false, msg: "Langkah terima/simpan tidak boleh ganda!"}; }
+                        
+                        if (cash < 0) return {ok: false, msg: "Uang Ayah hanya Rp30.000, belanjaanmu melebihi batas. Defisit anggaran!"};
+                    }
+                    
+                    if (cash === 0) return {ok: false, msg: "Gagal! Uangmu habis tanpa sisa untuk ditabung. Pengelolaan yang buruk!"};
+                    t += cash;
+                    
+                    if (boughtMainan) {
+                        return {ok: true, dompet: 0, tabung: t, msg: "Kamu berhasil menabung, namun uang banyak terkuras untuk mainan koleksi. Buku pengetahuan terlewat!"};
+                    }
+                    if (boughtBuku) {
+                        if (boughtWahana || boughtJajanan) {
+                            return {ok: true, dompet: 0, tabung: t, msg: "Luar Biasa! Belajar (Buku) dapat, bersenang-senang dapat, menabung pun berjalan. Keputusan yang sangat seimbang!"};
+                        }
+                        return {ok: true, dompet: 0, tabung: t, msg: "Pilihan yang sangat dewasa! Kamu mendahulukan ilmu dan menabung paling banyak. Tapi sekali-sekali kamu boleh bersenang-senang kok!"};
+                    }
+                    return {ok: true, dompet: 0, tabung: t, msg: "Kamu menabung cukup banyak, tapi sayang kamu melewatkan kesempatan membeli buku yang bagus demi makanan atau hiburan semata."};
+                }
+            },
+            {
+                id: 10,
+                title: "Dilema Empati (HOTS)",
+                scenario: "Kakak butuh uang Rp 25.000 MENDADAK HARI INI! Bersamaan, Jaket Impian diskon HARI INI dari Rp 60.000 jadi Rp 25.000! Kamu hanya mau ambil Rp 30.000 dari celengan. Apa keputusanmu?",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#e0e7ff" opacity="0.6"/>
+                    <!-- Brother icon -->
+                    <circle cx="35" cy="40" r="8" fill="#4f46e5"/>
+                    <path d="M25 60 C 25 50, 45 50, 45 60 Z" fill="#4f46e5"/>
+                    <!-- Jacket -->
+                    <path d="M60 40 L70 35 L80 40 L80 60 L60 60 Z" fill="#db2777"/>
+                    <path d="M65 40 L65 60 M75 40 L75 60" stroke="#be185d" stroke-width="2"/>
+                    <!-- Exclamation -->
+                    <text x="50" y="30" font-size="20" font-weight="900" fill="#dc2626">!?</text>
+                </svg>`,
+                blocks: [
+                    { id: 'ambil_tabungan', text: 'Ambil Tabungan Rp30.000', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🏧' },
+                    { id: 'bantu_kakak', text: 'Bantu Kakak Rp25.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '👨‍👩‍👧‍👦' },
+                    { id: 'beli_jaket', text: 'Beli Jaket Impian Rp25.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🧥' },
+                    { id: 'simpan_sisa', text: 'Simpan Sisa Uang ke Tabungan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                ],
+                validate: (prog) => {
+                    let t = 0;
+                    if (prog.length === 0 || prog[0] !== 'ambil_tabungan') return {ok: false, msg: "Mulai dengan mengambil uang tabungan!"};
+                    if (prog[prog.length-1] !== 'simpan_sisa') return {ok: false, msg: "Langkah terakhir harus menyimpan sisa uang!"};
+                    
+                    let bantuKakak = false, beliJaket = false;
+                    let cash = 30000;
+                    
+                    for (let i = 1; i < prog.length - 1; i++) {
+                        let id = prog[i];
+                        if (id === 'bantu_kakak') { cash -= 25000; bantuKakak = true; }
+                        else if (id === 'beli_jaket') { cash -= 25000; beliJaket = true; }
+                        else return {ok: false, msg: "Pilihan langkah tidak valid."};
+                    }
+                    
+                    if (cash < 0) return {ok: false, msg: "Error! Uang yang kamu ambil hanya Rp30.000, tidak cukup untuk KEDUANYA (butuh Rp 50.000). Kamu harus merelakan salah satu!"};
+                    
+                    if (!bantuKakak && !beliJaket) {
+                        return {ok: false, msg: "Mengambil uang tabungan lalu dikembalikan lagi tanpa melakukan apa-apa? Bantulah kakakmu atau belilah sesuatu."};
+                    }
+                    
+                    t = -30000 + cash; 
+                    
+                    if (bantuKakak) {
+                        return {ok: true, dompet: 0, tabung: t, msg: "🌟 KEPUTUSAN EMAS! Jaket impian bisa ditabung lagi nanti, namun menolong keluarga di saat genting adalah prioritas sejati. Kamu pahlawan finansial hari ini!"};
+                    } else if (beliJaket) {
+                        return {ok: true, dompet: 0, tabung: t, msg: "🥉 KEPUTUSAN PERUNGGU! Secara finansial sah karena memakai uangmu sendiri untuk barang diskon. Namun, kakakmu sedih tugasnya terancam gagal. Empati kadang lebih penting daripada keinginan."};
+                    }
+                    
+                    return {ok: false, msg: "Strategi tidak dapat diproses."};
                 }
             }
         ];
-
+        
         // Elements
         const elStart = document.getElementById('startScreen');
         const elBtnStart = document.getElementById('btnStart');
@@ -586,7 +758,7 @@
             });
             
             renderProgram();
-            setRobotState('idle', "Bip Bop! Menunggu perintah Programmer...");
+            setRobotState('idle', "Bip Bop! Menunggu urutan langkah...");
         }
 
         function addBlockToProgram(blockId) {
@@ -594,7 +766,7 @@
             soundEffects.click();
             state.program.push(blockId);
             renderProgram();
-            setRobotState('thinking', "Menerima baris kode baru... 📝");
+            setRobotState('thinking', "Menerima langkah baru... 📝");
         }
 
         function removeBlockFromProgram(index) {
@@ -643,19 +815,19 @@
             soundEffects.remove();
             state.program = [];
             renderProgram();
-            setRobotState('idle', "Program dihapus. Mulai dari awal!");
+            setRobotState('idle', "Urutan dihapus. Mulai dari awal!");
         });
 
         elBtnRun.addEventListener('click', () => {
             if (state.program.length === 0) {
-                setRobotState('error', "Bip Bop! Area program kosong. Tidak ada yang bisa dijalankan!");
+                setRobotState('error', "Bip Bop! Area langkah kosong. Tidak ada yang bisa dicek!");
                 soundEffects.error();
                 return;
             }
             
             state.isExecuting = true;
             soundEffects.run();
-            setRobotState('thinking', "Menjalankan program... Memproses algoritma... ⚙️");
+            setRobotState('thinking', "Menjalankan langkah... Memproses keputusan... ⚙️");
             
             // Animasi blok satu per satu (Simulasi eksekusi)
             const blocks = elProgram.children;
@@ -691,12 +863,12 @@
                     updateStatsUI();
                     
                     soundEffects.success();
-                    setRobotState('success', "Yeay! Program berjalan sempurna! 🤩");
-                    showModal(true, "Program Berhasil!", result.msg, result.dompet, result.tabung);
+                    setRobotState('success', "Yeay! Langkah berjalan sempurna! 🤩");
+                    showModal(true, "Berhasil!", result.msg, result.dompet, result.tabung);
                 } else {
                     soundEffects.error();
-                    setRobotState('error', "CRITICAL ERROR! 🤯");
-                    showModal(false, "Program Error (Bug) 🐛", result.msg, 0, 0);
+                    setRobotState('error', "Wah, urutannya salah! 🤯");
+                    showModal(false, "Urutan Salah 🐛", result.msg, 0, 0);
                 }
                 state.isExecuting = false;
             }, 500);
@@ -797,7 +969,7 @@
         elBtnRetry.addEventListener('click', () => {
             soundEffects.click();
             hideModal();
-            setRobotState('idle', "Ayo perbaiki urutan kodenya! 🤖");
+            setRobotState('idle', "Ayo perbaiki urutan langkahnya! 🤖");
         });
 
         function showEndScreen() {
@@ -805,9 +977,9 @@
             document.querySelector('main').innerHTML = `
                 <div class="flex-1 flex flex-col items-center justify-center p-6 text-center z-10 bg-white">
                     <div class="text-9xl mb-6 animate-bounce">🏆</div>
-                    <h1 class="text-4xl font-heading text-blue-600 mb-4">Lulus Sertifikasi Programmer!</h1>
+                    <h1 class="text-4xl font-heading text-blue-600 mb-4">Lulus Sertifikasi Pengelola Uang!</h1>
                     <p class="text-lg text-slate-600 max-w-lg mb-8 font-bold">
-                        Luar biasa! Kamu berhasil mengajari Robot cara membedakan kebutuhan & keinginan, serta menyusun instruksi yang logis.
+                        Luar biasa! Kamu berhasil mengajari Robot cara membedakan kebutuhan & keinginan, serta menyusun langkah yang logis.
                     </p>
                     
                     <div class="bg-yellow-100 border-4 border-yellow-400 p-6 rounded-3xl mb-8 flex gap-8">
