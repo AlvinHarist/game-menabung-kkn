@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Penabung Pintar 🤖💰</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+            background-size: 20px 20px;
+            overscroll-behavior-y: contain;
+        }
+        h1, h2, h3, .font-heading {
+            font-family: 'Fredoka One', cursive;
+        }
+        
+        /* Animasi Robot */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .robot-idle { animation: float 3s ease-in-out infinite; }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-5deg); }
+            50% { transform: translateX(5px) rotate(5deg); }
+            75% { transform: translateX(-5px) rotate(-5deg); }
+            100% { transform: translateX(0); }
+        }
+        .robot-error { animation: shake 0.5s ease-in-out; }
+
+        @keyframes jump {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        .robot-success { animation: jump 0.6s ease-in-out; }
+
+        /* Block Styles */
+        .code-block {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .code-block:active {
+            transform: scale(0.95);
+        }
+        .code-block-available:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Area Program */
+        .program-area {
+            min-height: 120px;
+            background: repeating-linear-gradient(
+                45deg,
+                #f8fafc,
+                #f8fafc 10px,
+                #f1f5f9 10px,
+                #f1f5f9 20px
+            );
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Scrollbar kustom */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <div id="startScreen" class="absolute inset-0 z-50 bg-blue-500 flex flex-col items-center justify-center p-4">
+        <div class="text-center bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full border-4 border-blue-600 relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 text-6xl opacity-20">⚙️</div>
+            <div class="absolute -bottom-10 -right-10 text-6xl opacity-20">💰</div>
+            
+            <div class="text-8xl mb-4 robot-idle">🤖</div>
+            <h1 class="text-3xl text-blue-600 mb-2 font-heading leading-tight">Robot Penabung Pintar</h1>
+            <p class="text-slate-600 mb-6 font-bold">Belajar Coding & Atur Uang Saku!</p>
+            
+            <ul class="text-left text-sm text-slate-600 mb-6 space-y-2 bg-blue-50 p-4 rounded-xl border border-blue-200">
+                <li>✅ <b>Peranmu:</b> Programmer</li>
+                <li>✅ <b>Tugas:</b> Beri urutan perintah yang benar agar Robot bisa menabung & tidak boros.</li>
+                <li>⚠️ <b>Hati-hati:</b> Perintah yang salah/terbalik akan membuat Robot error!</li>
+            </ul>
+            
+            <button id="btnStart" class="w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-heading text-xl py-4 rounded-2xl shadow-[0_6px_0_#b45309] active:shadow-none active:translate-y-[6px] transition-all">
+                MULAI BERMAIN ▶
+            </button>
+        </div>
+    </div>
+
+    <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center z-10 relative">
+        <div class="flex items-center gap-2">
+            <span class="text-3xl">🤖</span>
+            <h1 class="text-xl hidden sm:block">Level: <span id="levelDisplay" class="text-yellow-300">1</span></h1>
+        </div>
+        <div class="flex gap-4">
+            <div class="bg-blue-800 bg-opacity-50 px-4 py-2 rounded-full border border-blue-400 flex items-center gap-2 shadow-inner">
+                <span class="text-xl">👛</span>
+                <div class="flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-blue-200 leading-none">Dompet</span>
+                    <span class="font-heading text-lg leading-none" id="dompetDisplay">Rp 0</span>
+                </div>
+            </div>
+            <div class="bg-yellow-500 px-4 py-2 rounded-full border border-yellow-300 flex items-center gap-2 shadow-inner text-yellow-900">
+                <span class="text-xl">🐷</span>
+                <div class="flex flex-col">
+                    <span class="text-[10px] uppercase font-bold text-yellow-800 leading-none">Tabungan</span>
+                    <span class="font-heading text-lg leading-none" id="tabunganDisplay">Rp 0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        <!-- Bagian Kiri: Robot & Skenario -->
+        <section class="lg:w-1/3 bg-white border-r border-slate-200 flex flex-col p-4 z-10 shadow-lg lg:shadow-none">
+            
+            <!-- Karakter Robot -->
+            <div class="flex-1 flex flex-col items-center justify-center relative min-h-[200px]">
+                <div id="robotCharacter" class="text-8xl robot-idle filter drop-shadow-xl transition-all duration-300">🤖</div>
+                <div id="robotChat" class="absolute top-4 bg-white border-2 border-slate-200 p-3 rounded-2xl shadow-lg text-sm font-bold text-center opacity-0 transition-opacity duration-300 max-w-[80%] z-20">
+                    Bip Bop! Menunggu perintah...
+                    <!-- Segitiga balon kata -->
+                    <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-slate-200 rotate-45"></div>
+                </div>
+            </div>
+
+            <!-- Kartu Skenario -->
+            <div class="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-4 shadow-sm flex flex-col relative z-10">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-2xl">📜</span>
+                    <h2 class="font-heading text-yellow-800">Situasi Saat Ini:</h2>
+                </div>
+                <div id="scenarioIllustration" class="w-full h-32 flex justify-center items-center mb-4 transition-all duration-300 transform scale-100">
+                    <!-- SVG akan dimuat di sini -->
+                </div>
+                <p id="scenarioText" class="text-slate-700 font-bold leading-relaxed text-sm md:text-base">
+                    Memuat skenario...
+                </p>
+            </div>
+        </section>
+
+        <!-- Bagian Kanan: Area Pemrograman -->
+        <section class="lg:w-2/3 flex flex-col h-full bg-slate-50 relative">
+            
+            <!-- Blok Tersedia -->
+            <div class="p-4 bg-white border-b border-slate-200 z-10">
+                <h3 class="font-heading text-slate-500 mb-3 text-sm uppercase flex items-center gap-1">
+                    <span>🧩</span> Pilih Perintah (Klik untuk menambah)
+                </h3>
+                <div id="availableBlocks" class="flex flex-wrap gap-2">
+                    <!-- Blok akan di-render di sini via JS -->
+                </div>
+            </div>
+
+            <!-- Area Program (Drag/Drop/Click target) -->
+            <div class="flex-1 p-4 overflow-y-auto program-area flex flex-col">
+                <h3 class="font-heading text-slate-500 mb-3 text-sm uppercase flex items-center gap-1">
+                    <span>📝</span> Program Kamu (Urutan harus benar!)
+                </h3>
+                <div id="programArea" class="flex-1 flex flex-col gap-2 p-2 rounded-xl border-2 border-dashed border-slate-300 bg-white bg-opacity-50">
+                    <!-- Blok yang dipilih akan muncul di sini -->
+                    <div id="emptyProgramMsg" class="h-full flex items-center justify-center text-slate-400 font-bold text-center p-4">
+                        Belum ada instruksi.<br>Klik perintah di atas untuk menyusun algoritma!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Eksekusi -->
+            <div class="p-4 bg-white border-t border-slate-200 flex gap-3 z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <button id="btnClear" class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl border-2 border-red-200 active:scale-95 transition-transform flex items-center justify-center gap-2">
+                    <span>🗑️</span> Hapus Semua
+                </button>
+                <button id="btnRun" class="flex-[2] bg-green-500 hover:bg-green-600 text-white font-heading text-xl py-3 rounded-xl shadow-[0_5px_0_#166534] active:shadow-none active:translate-y-[5px] transition-all flex items-center justify-center gap-2">
+                    <span>▶️</span> JALANKAN PROGRAM
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Feedback -->
+    <div id="feedbackModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+        <div class="absolute inset-0 bg-slate-900 bg-opacity-40"></div>
+        <div id="modalContent" class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full relative z-10 transform scale-90 transition-transform duration-300">
+            <div id="modalIcon" class="text-6xl text-center mb-4">🎉</div>
+            <h2 id="modalTitle" class="font-heading text-2xl text-center mb-2">Kerja Bagus!</h2>
+            <p id="modalText" class="text-slate-600 text-center mb-6 font-bold">Kamu berhasil menyelesaikan masalah ini.</p>
+            <div id="modalStats" class="bg-slate-100 p-3 rounded-xl mb-6 text-sm font-bold flex justify-around hidden">
+                <div class="text-center"><span class="block text-slate-500 text-xs">Dompet</span><span id="modalDompet" class="text-blue-600">Rp0</span></div>
+                <div class="text-center"><span class="block text-slate-500 text-xs">Tabungan</span><span id="modalTabungan" class="text-yellow-600">Rp0</span></div>
+            </div>
+            <button id="btnNextLevel" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-heading py-3 rounded-xl shadow-[0_4px_0_#1e3a8a] active:shadow-none active:translate-y-[4px] transition-all">
+                LANJUTKAN ➔
+            </button>
+            <button id="btnRetry" class="w-full bg-orange-400 hover:bg-orange-500 text-white font-heading py-3 rounded-xl shadow-[0_4px_0_#9a3412] active:shadow-none active:translate-y-[4px] transition-all hidden">
+                COBA LAGI ↻
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Audio System (Tone.js) ---
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synth.volume.value = -10;
+
+        const soundEffects = {
+            click: () => synth.triggerAttackRelease("C5", "16n"),
+            remove: () => synth.triggerAttackRelease("G4", "16n"),
+            run: () => {
+                const now = Tone.now();
+                synth.triggerAttackRelease("C4", "8n", now);
+                synth.triggerAttackRelease("E4", "8n", now + 0.2);
+                synth.triggerAttackRelease("G4", "8n", now + 0.4);
+            },
+            success: () => {
+                const now = Tone.now();
+                synth.triggerAttackRelease("C5", "8n", now);
+                synth.triggerAttackRelease("E5", "8n", now + 0.15);
+                synth.triggerAttackRelease("G5", "4n", now + 0.3);
+                synth.triggerAttackRelease("C6", "2n", now + 0.5);
+            },
+            error: () => {
+                const now = Tone.now();
+                synth.triggerAttackRelease("G3", "8n", now);
+                synth.triggerAttackRelease("C3", "2n", now + 0.2);
+            }
+        };
+
+        // --- 2. Game State & Data ---
+        let state = {
+            level: 0,
+            dompet: 0,
+            tabungan: 0,
+            program: [], // Array ID blok yang dipilih pemain
+            isExecuting: false
+        };
+
+        // Format Uang Rupiah
+        const formatRp = (angka) => `Rp ${angka.toLocaleString('id-ID')}`;
+
+        // Skenario dirancang untuk mengajarkan sekuens logis (CT) dan prioritas keuangan.
+        const levels = [
+            {
+                id: 1,
+                title: "Dapat Uang Saku",
+                scenario: "Hari ini ibu memberimu uang saku Rp 10.000. Robot harus mengambil uangnya, menyisihkan setengah untuk ditabung, lalu memasukkan sisanya ke dompet untuk jajan.",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#bbf7d0" opacity="0.6"/>
+                    <g transform="translate(0, -5)">
+                        <path d="M20,100 C20,70 40,60 50,60 C60,60 80,70 80,100" fill="#fca5a5" stroke="#ef4444" stroke-width="4"/>
+                        <path d="M50,60 C50,45 35,45 25,55" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="50" cy="30" r="25" fill="#fbbf24" stroke="#d97706" stroke-width="4"/>
+                        <text x="50" y="37" font-size="18" font-weight="900" font-family="system-ui" fill="#d97706" text-anchor="middle">Rp</text>
+                    </g>
+                </svg>`,
+                blocks: [
+                    { id: 'b_jajan', text: 'Beli Mainan Rp10.000', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🧸' },
+                    { id: 'b_terima', text: 'Terima Uang Rp10.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'b_dompet', text: 'Simpan Rp5.000 ke Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '👛' },
+                    { id: 'b_tabung', text: 'Simpan Rp5.000 ke Tabungan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                ],
+                correctSequence: ['b_terima', 'b_tabung', 'b_dompet'],
+                // Toleransi urutan tabung/dompet bisa ditukar, tapi secara algoritma kita ajarin nabung dulu.
+                validate: (prog) => {
+                    if(prog.join(',') === 'b_terima,b_tabung,b_dompet') return { ok: true, dompet: 5000, tabung: 5000, msg: "Bagus! Kamu mengutamakan menabung sebelum memasukkan uang ke dompet jajan."};
+                    if(prog.join(',') === 'b_terima,b_dompet,b_tabung') return { ok: true, dompet: 5000, tabung: 5000, msg: "Berhasil! Tapi lain kali biasakan nabung dulu ya sebelum simpan di dompet jajan."};
+                    if(prog.includes('b_jajan')) return { ok: false, msg: "Bip bop! Mainan terbeli, tapi uang habis tidak ada tabungan. Sistem sedih. 🥺" };
+                    if(prog[0] !== 'b_terima') return { ok: false, msg: "Bip bop Error! Robot bingung. Uangnya belum diterima tapi sudah mau disimpan? Urutan salah! 🤯" };
+                    return { ok: false, msg: "Bip bop! Instruksi belum lengkap. Robot butuh urutan yang jelas." };
+                }
+            },
+            {
+                id: 2,
+                title: "Buku Tulis Habis",
+                scenario: "Buku tulis matematikamu habis. Harga buku baru Rp 5.000. Di kantin juga ada es krim enak seharga Rp 5.000. Coba suruh Robot menggunakan uang di dompetmu!",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#e0f2fe" opacity="0.6"/>
+                    <!-- Book -->
+                    <rect x="15" y="25" width="45" height="55" rx="4" fill="#38bdf8" stroke="#0284c7" stroke-width="4"/>
+                    <rect x="20" y="25" width="5" height="55" fill="#0284c7"/>
+                    <line x1="30" y1="40" x2="50" y2="40" stroke="#bae6fd" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="30" y1="55" x2="50" y2="55" stroke="#bae6fd" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="30" y1="70" x2="40" y2="70" stroke="#bae6fd" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Warning Bubble -->
+                    <path d="M55 20 Q 90 20 90 45 Q 90 70 70 70 L 60 80 L 60 70 Q 55 70 55 45 Z" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/>
+                    <text x="73" y="53" font-size="28" font-weight="900" font-family="system-ui" fill="#ef4444" text-anchor="middle">!</text>
+                </svg>`,
+                blocks: [
+                    { id: 'c_buka', text: 'Buka Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '👛' },
+                    { id: 'c_ambil', text: 'Ambil Uang Rp5.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'c_es', text: 'Beli Es Krim (Keinginan)', color: 'bg-pink-100 border-pink-300 text-pink-800', emoji: '🍦' },
+                    { id: 'c_buku', text: 'Beli Buku Tulis (Kebutuhan)', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '📓' },
+                    { id: 'c_tutup', text: 'Tutup Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🔒' }
+                ],
+                correctSequence: ['c_buka', 'c_ambil', 'c_buku', 'c_tutup'],
+                validate: (prog) => {
+                    const str = prog.join(',');
+                    if (str === 'c_buka,c_ambil,c_buku,c_tutup') return { ok: true, dompet: -5000, tabung: 0, msg: "Hebat! Kamu mengutamakan KEBUTUHAN (buku) daripada KEINGINAN (es krim) dengan urutan yang logis." };
+                    if (prog.includes('c_es')) return { ok: false, msg: "Bip bop! Es krim enak, tapi besok kamu dihukum guru karena tidak punya buku tulis. Keputusan kurang tepat! 😭" };
+                    if (prog.includes('c_buku') && !prog.includes('c_buka')) return { ok: false, msg: "Brak! Robot menabrak kasir. Dompet belum dibuka tapi mau bayar buku? Urutan salah (Error 404). 🤖💢" };
+                    return { ok: false, msg: "Bip bop! Instruksi tidak jelas. Robot butuh algoritma buka dompet, ambil uang, beli, lalu tutup dompet." };
+                }
+            },
+            {
+                id: 3,
+                title: "Bekal vs Jajan",
+                scenario: "Selesai jam olahraga, kamu sangat haus. Kamu ingat ibumu membawakan botol minum dari rumah. Apa instruksi yang tepat agar tabunganmu aman?",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#ffedd5" opacity="0.6"/>
+                    <!-- Backpack -->
+                    <rect x="15" y="35" width="45" height="50" rx="10" fill="#fb923c" stroke="#ea580c" stroke-width="4"/>
+                    <path d="M25 35 C 25 15 50 15 50 35" fill="none" stroke="#ea580c" stroke-width="5" stroke-linecap="round"/>
+                    <rect x="27.5" y="55" width="20" height="20" rx="4" fill="#fdba74" stroke="#ea580c" stroke-width="3"/>
+                    <!-- Water Bottle -->
+                    <rect x="65" y="35" width="22" height="50" rx="8" fill="#cffafe" stroke="#06b6d4" stroke-width="3"/>
+                    <path d="M65 55 Q 76 65 87 55 L 87 77 Q 76 85 65 77 Z" fill="#06b6d4" opacity="0.4"/>
+                    <rect x="71" y="25" width="10" height="10" rx="2" fill="#22d3ee" stroke="#06b6d4" stroke-width="3"/>
+                </svg>`,
+                blocks: [
+                    { id: 'd_tas', text: 'Buka Tas Sekolah', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '🎒' },
+                    { id: 'd_ambil', text: 'Ambil Botol Minum', color: 'bg-teal-100 border-teal-300 text-teal-800', emoji: '🫙' },
+                    { id: 'd_boba', text: 'Beli Es Boba Mahal', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🧋' },
+                    { id: 'd_minum', text: 'Minum Air Sampai Habis', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '💧' },
+                    { id: 'd_dompet', text: 'Ambil Uang Dompet', color: 'bg-green-100 border-green-300 text-green-800', emoji: '👛' }
+                ],
+                correctSequence: ['d_tas', 'd_ambil', 'd_minum'],
+                validate: (prog) => {
+                    const str = prog.join(',');
+                    if (str === 'd_tas,d_ambil,d_minum') return { ok: true, dompet: 0, tabung: 0, msg: "Brilian! Membawa bekal adalah cara terbaik menghemat uang. Tabungan dan dompetmu aman!" };
+                    if (prog.includes('d_boba')) return { ok: false, msg: "Bip bop! Es boba mahal dibeli. Uang dompet terkuras habis. Padahal bawa air minum dari rumah. Boros terdeteksi! 🚨" };
+                    if (prog.includes('d_minum') && !prog.includes('d_tas')) return { ok: false, msg: "Bip bop! Robot mencoba minum botol tanpa membuka tas. Tas basah! Urutan instruksi salah! 🤖💦" };
+                    return { ok: false, msg: "Bip bop! Robot kehausan karena instruksi belum selesai." };
+                }
+            },
+            {
+                id: 4,
+                title: "Hadiah Kejutan Nenek",
+                scenario: "Nenek berkunjung dan memberimu amplop berisi Rp 20.000! Karena hari ini tidak ke sekolah, uang ini uang kaget. Apa yang harus Robot lakukan?",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#fce7f3" opacity="0.6"/>
+                    <!-- Money behind Envelope -->
+                    <rect x="25" y="15" width="50" height="30" rx="2" fill="#86efac" stroke="#16a34a" stroke-width="4"/>
+                    <circle cx="50" cy="30" r="10" fill="#16a34a" opacity="0.4"/>
+                    <text x="50" y="34" font-size="12" font-weight="bold" font-family="system-ui" fill="white" text-anchor="middle">Rp</text>
+                    <!-- Envelope -->
+                    <rect x="15" y="35" width="70" height="45" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="4"/>
+                    <path d="M15 35 L50 60 L85 35" fill="none" stroke="#ca8a04" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M15 80 L40 60 M85 80 L60 60" fill="none" stroke="#ca8a04" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Sparkles -->
+                    <path d="M80 15 L83 10 L88 15 L93 18 L88 21 L83 26 L80 21 L75 18 Z" fill="#fbbf24"/>
+                    <path d="M20 15 L22 10 L26 15 L30 17 L26 19 L22 24 L20 19 L16 17 Z" fill="#fbbf24"/>
+                </svg>`,
+                blocks: [
+                    { id: 'e_terima', text: 'Terima Amplop', color: 'bg-green-100 border-green-300 text-green-800', emoji: '✉️' },
+                    { id: 'e_game', text: 'Beli Diamond Game', color: 'bg-red-100 border-red-300 text-red-800', emoji: '💎' },
+                    { id: 'e_kamar', text: 'Jalan ke Kamar', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '🚶' },
+                    { id: 'e_celengan', text: 'Masukkan Semua ke Celengan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                ],
+                correctSequence: ['e_terima', 'e_celengan'],
+                validate: (prog) => {
+                    const str = prog.join(',');
+                    if (str === 'e_terima,e_celengan') return { ok: true, dompet: 0, tabung: 20000, msg: "Luar Biasa! Uang hadiah langsung ditabung. Target celenganmu akan cepat penuh!" };
+                    if (prog.includes('e_game')) return { ok: false, msg: "Bip bop. Diamond game dibeli, kesenangan cuma sebentar, uang nenek lenyap seketika. Keputusan emosional terdeteksi! 📉" };
+                    
+                    return { ok: false, msg: "Bip bop. Instruksi kurang lengkap. Selesaikan tugasnya Programmer!" };
+                }
+            },
+            // LEVEL BARU (5-8)
+            {
+                id: 5,
+                title: "Godaan Diskon Palsu",
+                scenario: "Saat jalan pulang, ada toko mainan memasang tulisan 'DISKON 50%'. Tapi ingat, di rumah kamu sudah punya banyak mainan yang mirip. Apa yang harus dilakukan?",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#fecaca" opacity="0.6"/>
+                    <!-- Store Sign -->
+                    <rect x="20" y="20" width="60" height="30" rx="5" fill="#ef4444" stroke="#b91c1c" stroke-width="4"/>
+                    <text x="50" y="42" font-size="20" font-weight="900" font-family="system-ui" fill="white" text-anchor="middle">50%</text>
+                    <!-- Toy Car -->
+                    <path d="M30 65 L40 55 L60 55 L70 65 L75 65 L75 75 L25 75 L25 65 Z" fill="#3b82f6" stroke="#1d4ed8" stroke-width="3"/>
+                    <circle cx="35" cy="75" r="7" fill="#1e293b"/>
+                    <circle cx="65" cy="75" r="7" fill="#1e293b"/>
+                </svg>`,
+                blocks: [
+                    { id: 'f_lihat', text: 'Lihat Papan Diskon', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '👀' },
+                    { id: 'f_beli', text: 'Beli Mainan Diskon', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🏎️' },
+                    { id: 'f_ingat', text: 'Ingat Mainan di Rumah', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🧠' },
+                    { id: 'f_pergi', text: 'Tinggalkan Toko', color: 'bg-green-100 border-green-300 text-green-800', emoji: '🚶‍♂️' }
+                ],
+                correctSequence: ['f_lihat', 'f_ingat', 'f_pergi'],
+                validate: (prog) => {
+                    const str = prog.join(',');
+                    if (str === 'f_lihat,f_ingat,f_pergi') return { ok: true, dompet: 0, tabung: 0, msg: "Cerdas! Diskon tidak berguna jika kita membeli barang yang sebenarnya tidak kita butuhkan. Uangmu aman!" };
+                    if (prog.includes('f_beli')) return { ok: false, msg: "Bip bop! Mainan dibeli. Sampai rumah dimarahi ibu karena mainan menumpuk. Uang terbuang sia-sia! 💸" };
+                    if (str === 'f_lihat,f_pergi') return { ok: false, msg: "Hampir benar! Tapi sebelum pergi, robot harus 'Ingat Mainan di Rumah' agar keputusannya punya alasan logis. Coba lagi!" };
+                    return { ok: false, msg: "Bip bop. Urutan instruksi tidak lengkap." };
+                }
+            },
+            {
+                id: 6,
+                title: "Dana Darurat (Sakit)",
+                scenario: "Aduh! Kamu sakit perut karena makan pedas. Kamu harus beli obat di UKS seharga Rp5.000, padahal tadinya uang itu mau dipakai beli stiker keren.",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#dcfce7" opacity="0.6"/>
+                    <!-- Medicine Bottle -->
+                    <rect x="35" y="40" width="30" height="40" rx="5" fill="white" stroke="#16a34a" stroke-width="4"/>
+                    <rect x="40" y="30" width="20" height="10" fill="#16a34a"/>
+                    <!-- Cross -->
+                    <path d="M45 55 L55 55 M50 50 L50 60" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Dizzy face / bubbles -->
+                    <circle cx="75" cy="30" r="8" fill="#86efac" opacity="0.7"/>
+                    <circle cx="85" cy="20" r="4" fill="#86efac" opacity="0.7"/>
+                </svg>`,
+                blocks: [
+                    { id: 'g_sakit', text: 'Pegang Perut Sakit', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🤕' },
+                    { id: 'g_buka', text: 'Buka Dompet', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '👛' },
+                    { id: 'g_stiker', text: 'Beli Stiker Keren', color: 'bg-pink-100 border-pink-300 text-pink-800', emoji: '⭐' },
+                    { id: 'g_obat', text: 'Beli Obat Rp5.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💊' },
+                    { id: 'g_minum', text: 'Minum Obat', color: 'bg-teal-100 border-teal-300 text-teal-800', emoji: '💧' }
+                ],
+                correctSequence: ['g_buka', 'g_obat', 'g_minum'],
+                validate: (prog) => {
+                    const str = prog.join(',');
+                    if (str === 'g_sakit,g_buka,g_obat,g_minum') return { ok: true, dompet: -5000, tabung: 0, msg: "Keputusan tepat! Kesehatan (kebutuhan) harus diutamakan di atas stiker (keinginan). Uang saku bisa jadi 'dana darurat'." };
+                    if (prog.includes('g_stiker')) return { ok: false, msg: "Bip bop! Stiker dibeli, tapi robot masih sakit perut dan pingsan. Game Over! 😵" };
+                    if (prog.includes('g_obat') && !prog.includes('g_buka')) return { ok: false, msg: "Bip bop! Robot mau bayar obat tapi dompet belum dibuka. Kasir marah! 💢" };
+                    if (str.endsWith('g_obat')) return { ok: false, msg: "Bip bop! Obat sudah dibeli tapi belum diminum. Perut masih sakit!" };
+                    return { ok: false, msg: "Instruksi belum selesai. Selesaikan masalah sakit perutnya!" };
+                }
+            },
+            {
+                id: 7,
+                title: "Wirausaha Cilik",
+                scenario: "Temanmu sangat suka komik lamamu dan ingin membelinya seharga Rp15.000. Ini kesempatan dapat uang tambahan! Bagaimana urutan transaksi yang benar?",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#fef08a" opacity="0.6"/>
+                    <!-- Comic Book -->
+                    <rect x="25" y="30" width="30" height="45" rx="3" fill="#ef4444" stroke="#991b1b" stroke-width="3" transform="rotate(-15 40 50)"/>
+                    <rect x="30" y="35" width="20" height="20" fill="#fca5a5" transform="rotate(-15 40 50)"/>
+                    <!-- Exchange Arrows -->
+                    <path d="M60 40 Q75 35 75 50 Q75 65 60 60" fill="none" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+                    <polygon points="58,35 50,40 58,45" fill="#eab308"/>
+                    <polygon points="62,55 70,60 62,65" fill="#eab308"/>
+                    <!-- Money Coin -->
+                    <circle cx="75" cy="50" r="10" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+                    <text x="75" y="54" font-size="10" font-weight="bold" font-family="system-ui" fill="#d97706" text-anchor="middle">Rp</text>
+                </svg>`,
+                blocks: [
+                    { id: 'h_ambil', text: 'Ambil Komik Lama', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '📕' },
+                    { id: 'h_kasih', text: 'Berikan ke Teman', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🤝' },
+                    { id: 'h_jajan', text: 'Langsung Jajan', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🌭' },
+                    { id: 'h_terima', text: 'Terima Uang Rp15.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'h_tabung', text: 'Masukkan ke Celengan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🐷' }
+                ],
+                correctSequence: ['h_ambil', 'h_kasih', 'h_terima', 'h_tabung'],
+                validate: (prog) => {
+                    const str = prog.join(',');
+                    if (str === 'h_ambil,h_kasih,h_terima,h_tabung') return { ok: true, dompet: 0, tabung: 15000, msg: "Luar biasa! Kamu berhasil berbisnis kecil-kecilan dan menabung seluruh keuntungannya. Tabunganmu meroket! 🚀" };
+                    if (prog.includes('h_terima') && !prog.includes('h_kasih')) return { ok: false, msg: "Bip bop! Robot menerima uang tapi komiknya tidak diberikan. Itu namanya menipu! Error sistem moral! 👮" };
+                    if (prog.includes('h_jajan')) return { ok: false, msg: "Bip bop! Uang hasil jualan langsung habis buat jajan. Padahal bisa ditabung untuk beli barang yang lebih besar. Sayang sekali." };
+                    return { ok: false, msg: "Urutan transaksi salah. Harus ambil barang -> berikan -> terima uang -> simpan." };
+                }
+            },
+            {
+                id: 8,
+                title: "Membeli Sepatu Impian (Boss Level)",
+                scenario: "Target tabunganmu tercapai! Sepatu sekolahmu rusak dan harga sepatu baru Rp50.000. Susun 5 instruksi berurutan dengan sangat hati-hati untuk membelinya!",
+                illustration: `<svg viewBox="0 0 100 100" class="h-full drop-shadow-md">
+                    <circle cx="50" cy="50" r="45" fill="#f3e8ff" opacity="0.6"/>
+                    <!-- Broken Shoe -->
+                    <path d="M20 60 Q 30 55 40 60 L 40 70 L 20 70 Z" fill="#94a3b8" stroke="#64748b" stroke-width="2"/>
+                    <path d="M35 60 L35 50" stroke="#64748b" stroke-width="2" stroke-dasharray="2,2"/>
+                    <!-- New Shoe -->
+                    <path d="M50 50 Q 65 40 80 55 L 80 70 L 45 70 Q 45 60 50 50 Z" fill="#a855f7" stroke="#7e22ce" stroke-width="3"/>
+                    <circle cx="75" cy="45" r="4" fill="#fcd34d"/>
+                    <path d="M50 70 L80 70" stroke="white" stroke-width="3"/>
+                </svg>`,
+                blocks: [
+                    { id: 'i_buka', text: 'Buka Celengan', color: 'bg-yellow-100 border-yellow-300 text-yellow-800', emoji: '🔓' },
+                    { id: 'i_ambil', text: 'Ambil Uang Rp50.000', color: 'bg-green-100 border-green-300 text-green-800', emoji: '💵' },
+                    { id: 'i_game', text: 'Mampir Main PS', color: 'bg-red-100 border-red-300 text-red-800', emoji: '🎮' },
+                    { id: 'i_kunci', text: 'Kunci Kembali Celengan', color: 'bg-orange-100 border-orange-300 text-orange-800', emoji: '🔒' },
+                    { id: 'i_toko', text: 'Pergi ke Toko Sepatu', color: 'bg-blue-100 border-blue-300 text-blue-800', emoji: '🏪' },
+                    { id: 'i_beli', text: 'Bayar Sepatu', color: 'bg-purple-100 border-purple-300 text-purple-800', emoji: '👟' }
+                ],
+                correctSequence: ['i_buka', 'i_ambil', 'i_kunci', 'i_toko', 'i_beli'],
+                validate: (prog) => {
+                    const str = prog.join(',');
+                    if (str === 'i_buka,i_ambil,i_kunci,i_toko,i_beli') return { ok: true, dompet: 0, tabung: -50000, msg: "SEMPURNA! 🌟 Kamu mengatur urutan dengan sangat rapi, tidak tergoda main PS, dan ingat mengunci celengan lagi. Kamu benar-benar Programmer Keuangan yang Hebat!" };
+                    if (prog.includes('i_game')) return { ok: false, msg: "Bip bop! Mampir main PS, uang sepatu terpakai. Besok ke sekolah nyeker (tanpa sepatu). Keputusan yang buruk! 🦶" };
+                    if (prog.includes('i_toko') && !prog.includes('i_kunci')) return { ok: false, msg: "Bip bop! Celengan ditinggal terbuka. Uang sisanya hilang tertiup angin atau dicuri. Ingat tutup celengan sebelum pergi! 😱" };
+                    if (prog.includes('i_beli') && !prog.includes('i_toko')) return { ok: false, msg: "Bip bop! Bayar sepatu tapi belum pergi ke toko? Robot melempar uang ke udara. Error logika! 🤖💨" };
+                    return { ok: false, msg: "Instruksi salah. Harus: Buka -> Ambil -> Kunci -> Pergi Toko -> Bayar. Coba susun ulang!" };
+                }
+            }
+        ];
+
+        // Elements
+        const elStart = document.getElementById('startScreen');
+        const elBtnStart = document.getElementById('btnStart');
+        const elLevel = document.getElementById('levelDisplay');
+        const elDompet = document.getElementById('dompetDisplay');
+        const elTabungan = document.getElementById('tabunganDisplay');
+        const elScenario = document.getElementById('scenarioText');
+        const elAvailable = document.getElementById('availableBlocks');
+        const elProgram = document.getElementById('programArea');
+        const elEmptyMsg = document.getElementById('emptyProgramMsg');
+        const elBtnClear = document.getElementById('btnClear');
+        const elBtnRun = document.getElementById('btnRun');
+        
+        // Modal Elements
+        const elModal = document.getElementById('feedbackModal');
+        const elModalContent = document.getElementById('modalContent');
+        const elModalIcon = document.getElementById('modalIcon');
+        const elModalTitle = document.getElementById('modalTitle');
+        const elModalText = document.getElementById('modalText');
+        const elBtnNext = document.getElementById('btnNextLevel');
+        const elBtnRetry = document.getElementById('btnRetry');
+        const elModalStats = document.getElementById('modalStats');
+        const elModalDompet = document.getElementById('modalDompet');
+        const elModalTabung = document.getElementById('modalTabungan');
+
+        // Robot Elements
+        const elRobot = document.getElementById('robotCharacter');
+        const elRobotChat = document.getElementById('robotChat');
+
+        // Initialize Game
+        elBtnStart.addEventListener('click', async () => {
+            await Tone.start(); // Wajib untuk interaksi audio di browser
+            soundEffects.click();
+            elStart.style.opacity = '0';
+            setTimeout(() => {
+                elStart.style.display = 'none';
+                loadLevel(0);
+            }, 500);
+        });
+
+        function loadLevel(index) {
+            if (index >= levels.length) {
+                showEndScreen();
+                return;
+            }
+            
+            state.level = index;
+            state.program = [];
+            const levelData = levels[index];
+            
+            // Update UI
+            elLevel.innerText = levelData.id;
+            elScenario.innerText = levelData.scenario;
+            updateStatsUI();
+            
+            // Render Illustration with Animation
+            const elIllustration = document.getElementById('scenarioIllustration');
+            elIllustration.style.opacity = '0';
+            elIllustration.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                elIllustration.innerHTML = levelData.illustration;
+                elIllustration.style.opacity = '1';
+                elIllustration.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Render Blocks
+            elAvailable.innerHTML = '';
+            levelData.blocks.forEach(block => {
+                const btn = document.createElement('div');
+                btn.className = `code-block code-block-available ${block.color} border-2 rounded-xl p-3 cursor-pointer flex items-center gap-2 font-bold text-sm shadow-sm`;
+                btn.innerHTML = `<span class="text-xl">${block.emoji}</span> <span>${block.text}</span>`;
+                btn.onclick = () => addBlockToProgram(block.id);
+                elAvailable.appendChild(btn);
+            });
+            
+            renderProgram();
+            setRobotState('idle', "Bip Bop! Menunggu perintah Programmer...");
+        }
+
+        function addBlockToProgram(blockId) {
+            if(state.isExecuting) return;
+            soundEffects.click();
+            state.program.push(blockId);
+            renderProgram();
+            setRobotState('thinking', "Menerima baris kode baru... 📝");
+        }
+
+        function removeBlockFromProgram(index) {
+            if(state.isExecuting) return;
+            soundEffects.remove();
+            state.program.splice(index, 1);
+            renderProgram();
+        }
+
+        function renderProgram() {
+            const levelData = levels[state.level];
+            
+            if (state.program.length === 0) {
+                elProgram.innerHTML = '';
+                elProgram.appendChild(elEmptyMsg);
+                return;
+            }
+            
+            elProgram.innerHTML = '';
+            state.program.forEach((blockId, index) => {
+                const blockInfo = levelData.blocks.find(b => b.id === blockId);
+                const item = document.createElement('div');
+                item.className = `code-block ${blockInfo.color} border-2 rounded-xl p-2 cursor-pointer flex justify-between items-center shadow-sm w-full`;
+                
+                // Nomor urutan
+                const leftPart = document.createElement('div');
+                leftPart.className = "flex items-center gap-2";
+                leftPart.innerHTML = `<span class="bg-white bg-opacity-50 px-2 py-1 rounded font-mono text-xs shadow-inner">${index + 1}</span>
+                                      <span class="text-lg">${blockInfo.emoji}</span>
+                                      <span class="font-bold text-sm">${blockInfo.text}</span>`;
+                
+                // Tombol silang
+                const rightPart = document.createElement('div');
+                rightPart.innerHTML = `<span class="text-slate-400 hover:text-red-500 font-bold text-lg px-2">×</span>`;
+                
+                item.appendChild(leftPart);
+                item.appendChild(rightPart);
+                item.onclick = () => removeBlockFromProgram(index);
+                
+                elProgram.appendChild(item);
+            });
+        }
+
+        elBtnClear.addEventListener('click', () => {
+            if(state.isExecuting || state.program.length === 0) return;
+            soundEffects.remove();
+            state.program = [];
+            renderProgram();
+            setRobotState('idle', "Program dihapus. Mulai dari awal!");
+        });
+
+        elBtnRun.addEventListener('click', () => {
+            if (state.program.length === 0) {
+                setRobotState('error', "Bip Bop! Area program kosong. Tidak ada yang bisa dijalankan!");
+                soundEffects.error();
+                return;
+            }
+            
+            state.isExecuting = true;
+            soundEffects.run();
+            setRobotState('thinking', "Menjalankan program... Memproses algoritma... ⚙️");
+            
+            // Animasi blok satu per satu (Simulasi eksekusi)
+            const blocks = elProgram.children;
+            let i = 0;
+            
+            function animateNextBlock() {
+                if (i < blocks.length) {
+                    // Reset styling semua block
+                    Array.from(blocks).forEach(b => b.style.transform = 'scale(1)');
+                    // Highlight block berjalan
+                    blocks[i].style.transform = 'scale(1.02) translateX(5px)';
+                    blocks[i].style.transition = 'transform 0.2s';
+                    i++;
+                    setTimeout(animateNextBlock, 400); // Kecepatan eksekusi
+                } else {
+                    // Eksekusi selesai, validasi hasil
+                    Array.from(blocks).forEach(b => b.style.transform = 'scale(1)');
+                    evaluateProgram();
+                }
+            }
+            animateNextBlock();
+        });
+
+        function evaluateProgram() {
+            const levelData = levels[state.level];
+            const result = levelData.validate(state.program);
+            
+            setTimeout(() => {
+                if (result.ok) {
+                    // Update keuangan
+                    state.dompet += result.dompet;
+                    state.tabungan += result.tabung;
+                    updateStatsUI();
+                    
+                    soundEffects.success();
+                    setRobotState('success', "Yeay! Program berjalan sempurna! 🤩");
+                    showModal(true, "Program Berhasil!", result.msg, result.dompet, result.tabung);
+                } else {
+                    soundEffects.error();
+                    setRobotState('error', "CRITICAL ERROR! 🤯");
+                    showModal(false, "Program Error (Bug) 🐛", result.msg, 0, 0);
+                }
+                state.isExecuting = false;
+            }, 500);
+        }
+
+        function updateStatsUI() {
+            elDompet.innerText = formatRp(state.dompet);
+            elTabungan.innerText = formatRp(state.tabungan);
+            
+            // Animasi pop
+            elDompet.parentElement.parentElement.classList.add('scale-110');
+            elTabungan.parentElement.parentElement.classList.add('scale-110');
+            setTimeout(() => {
+                elDompet.parentElement.parentElement.classList.remove('scale-110');
+                elTabungan.parentElement.parentElement.classList.remove('scale-110');
+            }, 300);
+        }
+
+        function setRobotState(condition, message) {
+            elRobot.className = 'text-8xl filter drop-shadow-xl transition-all duration-300';
+            
+            if(condition === 'idle') {
+                elRobot.innerText = '🤖';
+                elRobot.classList.add('robot-idle');
+            } else if (condition === 'thinking') {
+                elRobot.innerText = '🧐';
+                elRobot.classList.add('animate-pulse');
+            } else if (condition === 'success') {
+                elRobot.innerText = '🤩';
+                elRobot.classList.add('robot-success');
+            } else if (condition === 'error') {
+                elRobot.innerText = '🤯';
+                elRobot.classList.add('robot-error');
+            }
+
+            elRobotChat.innerText = message;
+            elRobotChat.style.opacity = '1';
+            
+            // Hapus segitiga lama, pasang baru (hacky way untuk pertahankan CSS panah)
+            elRobotChat.innerHTML += '<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-slate-200 rotate-45"></div>';
+
+            if(condition === 'error' || condition === 'success') {
+                // Auto hide chat after a while
+                setTimeout(() => elRobotChat.style.opacity = '0', 3000);
+            }
+        }
+
+        function showModal(isSuccess, title, text, diffDompet, diffTabung) {
+            elModal.classList.remove('hidden');
+            // Sedikit delay untuk animasi popup
+            setTimeout(() => {
+                elModalContent.classList.remove('scale-90', 'opacity-0');
+                elModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            elModalTitle.innerText = title;
+            elModalText.innerText = text;
+
+            if (isSuccess) {
+                elModalIcon.innerText = '🎉';
+                elModalTitle.className = "font-heading text-2xl text-center mb-2 text-green-600";
+                elBtnNext.classList.remove('hidden');
+                elBtnRetry.classList.add('hidden');
+                
+                // Show stats if there's a change
+                if(diffDompet !== 0 || diffTabung !== 0) {
+                    elModalStats.classList.remove('hidden');
+                    elModalDompet.innerText = (diffDompet > 0 ? '+' : '') + formatRp(diffDompet);
+                    elModalDompet.className = diffDompet >= 0 ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+                    elModalTabung.innerText = (diffTabung > 0 ? '+' : '') + formatRp(diffTabung);
+                    elModalTabung.className = diffTabung >= 0 ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+                } else {
+                    elModalStats.classList.add('hidden');
+                }
+            } else {
+                elModalIcon.innerText = '🐛';
+                elModalTitle.className = "font-heading text-2xl text-center mb-2 text-red-600";
+                elBtnNext.classList.add('hidden');
+                elBtnRetry.classList.remove('hidden');
+                elModalStats.classList.add('hidden');
+            }
+        }
+
+        function hideModal() {
+            elModalContent.classList.remove('scale-100');
+            elModalContent.classList.add('scale-90');
+            setTimeout(() => {
+                elModal.classList.add('hidden');
+            }, 300);
+        }
+
+        elBtnNext.addEventListener('click', () => {
+            soundEffects.click();
+            hideModal();
+            loadLevel(state.level + 1);
+        });
+
+        elBtnRetry.addEventListener('click', () => {
+            soundEffects.click();
+            hideModal();
+            setRobotState('idle', "Ayo perbaiki urutan kodenya! 🤖");
+        });
+
+        function showEndScreen() {
+            // Sembunyikan main game, tampilkan pesan tamat
+            document.querySelector('main').innerHTML = `
+                <div class="flex-1 flex flex-col items-center justify-center p-6 text-center z-10 bg-white">
+                    <div class="text-9xl mb-6 animate-bounce">🏆</div>
+                    <h1 class="text-4xl font-heading text-blue-600 mb-4">Lulus Sertifikasi Programmer!</h1>
+                    <p class="text-lg text-slate-600 max-w-lg mb-8 font-bold">
+                        Luar biasa! Kamu berhasil mengajari Robot cara membedakan kebutuhan & keinginan, serta menyusun instruksi yang logis.
+                    </p>
+                    
+                    <div class="bg-yellow-100 border-4 border-yellow-400 p-6 rounded-3xl mb-8 flex gap-8">
+                        <div>
+                            <span class="block text-slate-500 uppercase text-sm font-bold mb-1">Total Dompet</span>
+                            <span class="font-heading text-3xl text-blue-700">${formatRp(state.dompet)}</span>
+                        </div>
+                        <div>
+                            <span class="block text-slate-500 uppercase text-sm font-bold mb-1">Total Tabungan</span>
+                            <span class="font-heading text-3xl text-yellow-700">${formatRp(state.tabungan)}</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="location.reload()" class="bg-blue-500 hover:bg-blue-600 text-white font-heading text-xl py-4 px-8 rounded-2xl shadow-[0_6px_0_#1e3a8a] active:shadow-none active:translate-y-[6px] transition-all">
+                        MAIN KEMBALI ↻
+                    </button>
+                </div>
+            `;
+        }
+
+    </script>
+</body>
+</html>
